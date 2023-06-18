@@ -1,39 +1,42 @@
 import { useState, useEffect } from "react";
+import useInput from "../hooks/use-input";
 import "../index.css";
 const SimpleInput = (props) => {
-  const [enteredName, setEnteredName] = useState("");
-  const [nameTouched, setNameTouched] = useState(false);
- const [formIsValid, setFormIsValid] = useState(false);
-  const nameIsValid = enteredName.trim() !== "";
-  const nameInputIsInvalid = !nameIsValid && nameTouched;
+  const {
+    value: enteredName,
+    isValid:nameIsValid,
+    hasError: nameInputHasError,
+    changeHandler: nameChangeHandler,
+    blurHandler: nameBlurHandler,
+    reset:resetNameInput
+  } = useInput(value=>value.trim()!=='');
 
-  const nameInputChangeHandler = (e) => {
-    setEnteredName(e.target.value);
-  };
+  const [formIsValid, setFormIsValid] = useState(false);
 
-  const blurHandler = (e) => {
-    setNameTouched(true);
-  };
 
-  useEffect(()=>{
-    if(nameIsValid){
+ 
+
+ 
+  useEffect(() => {
+    if (nameIsValid) {
       setFormIsValid(true);
-    }else{
-      setFormIsValid(false)
+    } else {
+      setFormIsValid(false);
     }
-  },[nameIsValid])
+  }, [nameIsValid]);
+
+
   const formSubmissionHandler = (e) => {
     e.preventDefault();
-    setNameTouched(true);
+    
     if (!nameIsValid) {
       return;
     }
 
-    setEnteredName("");
-    setNameTouched(false);
+    resetNameInput();
   };
 
-  const nameInputClasses = nameInputIsInvalid
+  const nameInputClasses = nameInputHasError
     ? "form-control invalid"
     : "form-control";
   return (
@@ -41,15 +44,15 @@ const SimpleInput = (props) => {
       <div className={nameInputClasses}>
         <label htmlFor="name">Name</label>
         <input
-          onChange={nameInputChangeHandler}
-          onBlur={blurHandler}
+          onChange={nameChangeHandler}
+          onBlur={nameBlurHandler}
           id="name"
           type="text"
           placeholder="Steve"
           minLength={2}
           value={enteredName}
         ></input>
-        {nameInputIsInvalid && (
+        {nameInputHasError && (
           <p className="error-text">Name must not be empty</p>
         )}
         <label htmlFor="lastname">lastName</label>

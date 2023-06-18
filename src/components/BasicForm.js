@@ -1,10 +1,10 @@
 const BasicForm = (props) => {
   return (
-    <form>
+    <form onSubmit={props.submit}>
       <div className='control-group'>
         <div className='form-control'>
           <label htmlFor='name'>First Name</label>
-          <input type='text' id='name' />
+          <input type='text' className={props.class} id='name' />
         </div>
         <div className='form-control'>
           <label htmlFor='name'>Last Name</label>
