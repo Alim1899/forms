@@ -1,46 +1,38 @@
-import { useEffect, useRef, useState } from "react";
+import { useState, useEffect } from "react";
 import "../index.css";
 const SimpleInput = (props) => {
   const [enteredName, setEnteredName] = useState("");
-  const [nameIsValid, setNameIsValid] = useState(false);
   const [nameTouched, setNameTouched] = useState(false);
-  const nameRef = useRef();
-  const lastname = useRef();
+ const [formIsValid, setFormIsValid] = useState(false);
+  const nameIsValid = enteredName.trim() !== "";
+  const nameInputIsInvalid = !nameIsValid && nameTouched;
 
   const nameInputChangeHandler = (e) => {
     setEnteredName(e.target.value);
-    if(enteredName.trim()===''){
-      setNameIsValid(false);
-    }
   };
 
-const blurHandler = e=>{
-  setNameTouched(true);
-  if(enteredName.trim()===''){
-    setNameIsValid(false);
-  }else{
-    setNameTouched(false)
-  }
-}
+  const blurHandler = (e) => {
+    setNameTouched(true);
+  };
 
-useEffect(()=>{
-
-},[])
-
+  useEffect(()=>{
+    if(nameIsValid){
+      setFormIsValid(true);
+    }else{
+      setFormIsValid(false)
+    }
+  },[nameIsValid])
   const formSubmissionHandler = (e) => {
     e.preventDefault();
     setNameTouched(true);
-    if (enteredName.trim() === "") {
-      setNameIsValid(false);
+    if (!nameIsValid) {
       return;
     }
-    setNameIsValid(true);
-    const enteredValue = nameRef.current.value;
-    console.log(enteredValue);
+
     setEnteredName("");
+    setNameTouched(false);
   };
 
-  const nameInputIsInvalid = !nameIsValid && nameTouched;
   const nameInputClasses = nameInputIsInvalid
     ? "form-control invalid"
     : "form-control";
@@ -55,7 +47,6 @@ useEffect(()=>{
           type="text"
           placeholder="Steve"
           minLength={2}
-          ref={nameRef}
           value={enteredName}
         ></input>
         {nameInputIsInvalid && (
@@ -67,10 +58,9 @@ useEffect(()=>{
           type="text"
           minLength={2}
           placeholder="Mc Gregory"
-          ref={lastname}
         ></input>
       </div>
-      <button>SUBMIT</button>
+      <button disabled={!formIsValid}>SUBMIT</button>
     </form>
   );
 };
